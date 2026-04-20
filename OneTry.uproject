@@ -1,0 +1,16 @@
+{
+    "FileVersion": 3,
+    "EngineAssociation": "5.3",
+    "Category": "",
+    "Description": "Empty 3D scene project",
+    "Modules": [],
+    "Plugins": [
+        {
+            "Name": "ModelingToolsEditorMode",
+            "Enabled": true,
+            "TargetAllowList": [
+                "Editor"
+            ]
+        }
+    ]
+}

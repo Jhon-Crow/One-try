@@ -1,0 +1,112 @@
+name: Build Portable Windows EXE
+
+on:
+  push:
+    branches: [ main, "issue-*" ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  PROJECT_NAME: OneTry
+  UE_VERSION: 5.3.2
+
+jobs:
+  package-windows:
+    name: Package Windows Shipping Build
+    # -----------------------------------------------------------------
+    # OPTION A (default): GitHub-hosted Linux runner + Epic's official
+    #   Docker image with cross-compilation to Win64.
+    #
+    #   REQUIREMENT: The repository owner must have their GitHub account
+    #   linked to an Epic Games account that accepted the UE EULA.
+    #   See: https://www.unrealengine.com/en-US/ue-on-github
+    #   Then add a Personal Access Token (classic, read:packages scope)
+    #   as the secret EPIC_GITHUB_TOKEN in repository Settings → Secrets.
+    #
+    # OPTION B: Self-hosted Windows runner (if you have UE5 installed):
+    #   1. Comment out "runs-on: ubuntu-22.04" and the "container:" block.
+    #   2. Uncomment: runs-on: [self-hosted, windows, ue5]
+    #   3. Replace the "Package project" step with the Windows cmd variant
+    #      shown in the comment below that step.
+    # -----------------------------------------------------------------
+    runs-on: ubuntu-22.04
+    container:
+      image: ghcr.io/epicgames/unreal-engine:dev-slim-${{ env.UE_VERSION }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.EPIC_GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Verify UE installation
+        run: |
+          UE_ROOT=/home/ue4/UnrealEngine
+          echo "UE root: $UE_ROOT"
+          ls "$UE_ROOT/Engine/Build/BatchFiles/RunUAT.sh"
+
+      - name: Package project (BuildCookRun) - Linux runner
+        # For a self-hosted Windows runner replace this step with:
+        #   shell: cmd
+        #   run: |
+        #     "%UE5_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" ^
+        #       BuildCookRun ^
+        #       -project="%GITHUB_WORKSPACE%\%PROJECT_NAME%.uproject" ^
+        #       -noP4 -platform=Win64 -clientconfig=Shipping ^
+        #       -cook -allmaps -build -stage -pak -archive ^
+        #       -archivedirectory="%GITHUB_WORKSPACE%\PackagedBuild" ^
+        #       -prereqs -nodebuginfo -unattended -utf8output
+        run: |
+          UE_ROOT=/home/ue4/UnrealEngine
+          "$UE_ROOT/Engine/Build/BatchFiles/RunUAT.sh" \
+            BuildCookRun \
+            -project="${GITHUB_WORKSPACE}/${{ env.PROJECT_NAME }}.uproject" \
+            -noP4 \
+            -platform=Win64 \
+            -clientconfig=Shipping \
+            -cook \
+            -allmaps \
+            -build \
+            -stage \
+            -pak \
+            -archive \
+            -archivedirectory="${GITHUB_WORKSPACE}/PackagedBuild" \
+            -prereqs \
+            -nodebuginfo \
+            -unattended \
+            -utf8output \
+            2>&1 | tee uat_log.txt
+        env:
+          CI: true
+
+      - name: List packaged output
+        if: always()
+        run: find PackagedBuild -type f | head -50 || echo "PackagedBuild directory not found"
+
+      - name: Create portable ZIP archive
+        if: success()
+        run: |
+          cd PackagedBuild
+          zip -r "../${{ env.PROJECT_NAME }}-Win64-Shipping.zip" Windows/ \
+            --exclude "*.pdb" --exclude "*.debug"
+
+      - name: Upload portable EXE artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}-Win64-Shipping-${{ github.run_number }}
+          path: ${{ env.PROJECT_NAME }}-Win64-Shipping.zip
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload UAT log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uat-log-${{ github.run_number }}
+          path: uat_log.txt
+          retention-days: 7
