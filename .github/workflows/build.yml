@@ -58,7 +58,7 @@ jobs:
     name: Package Windows Shipping Build (Win64)
     runs-on: ubuntu-latest
     container:
-      image: ${{ env.UE_IMAGE }}
+      image: ghcr.io/epicgames/unreal-engine:dev-slim-5.3
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.EPIC_GITHUB_TOKEN }}
