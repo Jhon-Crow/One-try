@@ -12,65 +12,48 @@ env:
 
 jobs:
   # ---------------------------------------------------------------------
-  # checklicense: reports whether packaging can actually run. Push/PR builds
-  # stay green without Unity secrets so repository setup does not block CI;
-  # the real build job still runs only when UNITY_LICENSE is configured.
+  # checklicense: reports whether the build can run based on available
+  # credentials. Push/PR builds stay green without Unity credentials so
+  # repository setup does not block CI; the real build job still runs
+  # only when UNITY_EMAIL and UNITY_PASSWORD are configured.
   # ---------------------------------------------------------------------
   checklicense:
-    name: Check for UNITY_LICENSE in GitHub Secrets
+    name: Check for Unity credentials in GitHub Secrets
     runs-on: ubuntu-latest
     outputs:
-      is_unity_license_set: ${{ steps.checklicense_job.outputs.is_unity_license_set }}
+      has_credentials: ${{ steps.checklicense_job.outputs.has_credentials }}
     steps:
       - id: checklicense_job
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         run: |
-          if [ -n "$UNITY_LICENSE" ]; then
-            echo "UNITY_LICENSE is set; build will run."
-            echo "is_unity_license_set=true" >> "$GITHUB_OUTPUT"
+          if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
+            echo "Unity credentials are set; build will run."
+            echo "has_credentials=true" >> "$GITHUB_OUTPUT"
           else
-            echo "UNITY_LICENSE is NOT set."
-            echo "Configure UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD secrets to enable Windows packaging."
+            echo "Unity credentials (UNITY_EMAIL and/or UNITY_PASSWORD) are NOT set."
+            echo "Add UNITY_EMAIL and UNITY_PASSWORD repository secrets to enable Windows packaging."
             echo "See README.md → 'GitHub Actions — Portable Windows EXE → Setup'."
-            echo "is_unity_license_set=false" >> "$GITHUB_OUTPUT"
+            echo "has_credentials=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Report portable EXE artifact availability
-        if: steps.checklicense_job.outputs.is_unity_license_set == 'false' && github.event_name != 'workflow_dispatch'
+        if: steps.checklicense_job.outputs.has_credentials == 'false'
         run: |
-          echo "::warning title=Portable EXE artifact is not available::UNITY_LICENSE is missing, so the Windows packaging job is skipped and no OneTry-Win64 ZIP artifact is uploaded for this run."
-          echo "Add UNITY_LICENSE, UNITY_EMAIL, and UNITY_PASSWORD repository secrets, then re-run this workflow to produce the portable EXE artifact."
-
-  # ---------------------------------------------------------------------
-  # activation: runs on demand (manual workflow_dispatch) when there is
-  # no UNITY_LICENSE yet, producing a .alf activation request file as an
-  # artifact. Upload it to https://license.unity3d.com/manual to get a
-  # .ulf license, then store its content in the UNITY_LICENSE secret.
-  # ---------------------------------------------------------------------
-  activation:
-    needs: checklicense
-    if: needs.checklicense.outputs.is_unity_license_set == 'false' && github.event_name == 'workflow_dispatch'
-    name: Request Unity activation file
-    runs-on: ubuntu-latest
-    steps:
-      - name: Request manual activation file
-        id: getManualLicenseFile
-        uses: game-ci/unity-request-activation-file@v2
-      - name: Upload activation file artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.getManualLicenseFile.outputs.filePath }}
-          path: ${{ steps.getManualLicenseFile.outputs.filePath }}
+          echo "::warning title=Portable EXE artifact is not available::Unity credentials are missing, so the Windows packaging job is skipped and no OneTry-Win64 ZIP artifact is uploaded for this run."
+          echo "Add UNITY_EMAIL and UNITY_PASSWORD repository secrets, then re-run this workflow to produce the portable EXE artifact."
 
   # ---------------------------------------------------------------------
   # build: cross-compiles the Unity project to StandaloneWindows64 from
-  # a Linux runner via GameCI's Docker images. Library/ is cached per
-  # platform for fast subsequent builds.
+  # a Linux runner via GameCI's Docker images. Activates a Personal Unity
+  # license via buildalon/activate-unity-license (credential-based,
+  # no .alf/.ulf exchange needed). Library/ is cached per platform for
+  # fast subsequent builds.
   # ---------------------------------------------------------------------
   build:
     needs: checklicense
-    if: needs.checklicense.outputs.is_unity_license_set == 'true'
+    if: needs.checklicense.outputs.has_credentials == 'true'
     name: Package Windows Shipping Build (StandaloneWindows64)
     runs-on: ubuntu-latest
     steps:
@@ -87,6 +70,13 @@ jobs:
             Library-StandaloneWindows64-
             Library-
 
+      - name: Activate Unity license
+        uses: buildalon/activate-unity-license@v1
+        with:
+          license: 'Personal'
+          username: ${{ secrets.UNITY_EMAIL }}
+          password: ${{ secrets.UNITY_PASSWORD }}
+
       - name: Build Unity project
         uses: game-ci/unity-builder@v4
         env:
@@ -96,6 +86,12 @@ jobs:
         with:
           targetPlatform: StandaloneWindows64
           buildName: ${{ env.PROJECT_NAME }}
+
+      - name: Return Unity license
+        if: always()
+        uses: buildalon/activate-unity-license@v1
+        with:
+          return-license: true
 
       - name: List packaged output
         if: always()

@@ -50,22 +50,26 @@ uploads the result as a workflow artifact.
 
 ### Setup (required once)
 
-The build needs a Unity account. Personal licenses are free.
+The build needs a Unity license. Personal licenses are free.
 
 1. Create a free Unity account at <https://id.unity.com> if you don't
    have one.
-2. Add the following secrets in **Settings → Secrets and variables →
+2. Generate a Unity Personal license file (`.ulf`) — easiest path is to
+   trigger this workflow once with no `UNITY_LICENSE` set; the
+   "Request manual activation file" job will produce a `.alf` artifact,
+   upload it to <https://license.unity3d.com/manual>, and download the
+   resulting `.ulf`.
+3. Add the following secrets in **Settings → Secrets and variables →
    Actions**:
-   - `UNITY_EMAIL` — your Unity account email address.
+   - `UNITY_LICENSE` — full text content of the `.ulf` file.
+   - `UNITY_EMAIL` — your Unity account email.
    - `UNITY_PASSWORD` — your Unity account password.
 
-That is all. The workflow activates a Personal license automatically
-using [`buildalon/activate-unity-license`](https://github.com/buildalon/activate-unity-license)
-at build time — no `.alf` or `.ulf` file generation or upload is needed.
-
-Until those two secrets are set, push and pull-request runs pass the
-`Check for Unity credentials in GitHub Secrets` preflight but skip the
-Unity packaging job, so no portable EXE artifact is uploaded.
+Until those secrets are set, push and pull-request runs pass the
+`Check for UNITY_LICENSE in GitHub Secrets` preflight but skip the Unity
+packaging job, so no portable EXE artifact is uploaded. Manual
+`workflow_dispatch` runs are allowed to continue to the activation job
+so the owner can download the `.alf` activation-request artifact.
 
 ### Running the build
 
