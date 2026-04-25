@@ -9,104 +9,106 @@ on:
 
 env:
   PROJECT_NAME: OneTry
-  UE_VERSION: 5.3.2
 
 jobs:
-  package-windows:
-    name: Package Windows Shipping Build
-    # -----------------------------------------------------------------
-    # OPTION A (default): GitHub-hosted Linux runner + Epic's official
-    #   Docker image with cross-compilation to Win64.
-    #
-    #   REQUIREMENT: The repository owner must have their GitHub account
-    #   linked to an Epic Games account that accepted the UE EULA.
-    #   See: https://www.unrealengine.com/en-US/ue-on-github
-    #   Then add a Personal Access Token (classic, read:packages scope)
-    #   as the secret EPIC_GITHUB_TOKEN in repository Settings → Secrets.
-    #
-    # OPTION B: Self-hosted Windows runner (if you have UE5 installed):
-    #   1. Comment out "runs-on: ubuntu-22.04" and the "container:" block.
-    #   2. Uncomment: runs-on: [self-hosted, windows, ue5]
-    #   3. Replace the "Package project" step with the Windows cmd variant
-    #      shown in the comment below that step.
-    # -----------------------------------------------------------------
-    runs-on: ubuntu-22.04
-    container:
-      image: ghcr.io/epicgames/unreal-engine:dev-slim-${{ env.UE_VERSION }}
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.EPIC_GITHUB_TOKEN }}
-
+  # ---------------------------------------------------------------------
+  # checklicense: skips the build cleanly when no Unity license is set,
+  # so first-time contributors and forks see a clear "configure secrets"
+  # signal instead of a red CI.
+  # ---------------------------------------------------------------------
+  checklicense:
+    name: Check for UNITY_LICENSE in GitHub Secrets
+    runs-on: ubuntu-latest
+    outputs:
+      is_unity_license_set: ${{ steps.checklicense_job.outputs.is_unity_license_set }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          lfs: false
-
-      - name: Verify UE installation
-        run: |
-          UE_ROOT=/home/ue4/UnrealEngine
-          echo "UE root: $UE_ROOT"
-          ls "$UE_ROOT/Engine/Build/BatchFiles/RunUAT.sh"
-
-      - name: Package project (BuildCookRun) - Linux runner
-        # For a self-hosted Windows runner replace this step with:
-        #   shell: cmd
-        #   run: |
-        #     "%UE5_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" ^
-        #       BuildCookRun ^
-        #       -project="%GITHUB_WORKSPACE%\%PROJECT_NAME%.uproject" ^
-        #       -noP4 -platform=Win64 -clientconfig=Shipping ^
-        #       -cook -allmaps -build -stage -pak -archive ^
-        #       -archivedirectory="%GITHUB_WORKSPACE%\PackagedBuild" ^
-        #       -prereqs -nodebuginfo -unattended -utf8output
-        run: |
-          UE_ROOT=/home/ue4/UnrealEngine
-          "$UE_ROOT/Engine/Build/BatchFiles/RunUAT.sh" \
-            BuildCookRun \
-            -project="${GITHUB_WORKSPACE}/${{ env.PROJECT_NAME }}.uproject" \
-            -noP4 \
-            -platform=Win64 \
-            -clientconfig=Shipping \
-            -cook \
-            -allmaps \
-            -build \
-            -stage \
-            -pak \
-            -archive \
-            -archivedirectory="${GITHUB_WORKSPACE}/PackagedBuild" \
-            -prereqs \
-            -nodebuginfo \
-            -unattended \
-            -utf8output \
-            2>&1 | tee uat_log.txt
+      - id: checklicense_job
         env:
-          CI: true
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        run: |
+          if [ -n "$UNITY_LICENSE" ]; then
+            echo "UNITY_LICENSE is set; build will run."
+            echo "is_unity_license_set=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "UNITY_LICENSE is NOT set."
+            echo "Configure UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD secrets to enable Windows packaging."
+            echo "See README.md → 'GitHub Actions — Portable Windows EXE → Setup'."
+            echo "is_unity_license_set=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ---------------------------------------------------------------------
+  # activation: runs on demand (manual workflow_dispatch) when there is
+  # no UNITY_LICENSE yet, producing a .alf activation request file as an
+  # artifact. Upload it to https://license.unity3d.com/manual to get a
+  # .ulf license, then store its content in the UNITY_LICENSE secret.
+  # ---------------------------------------------------------------------
+  activation:
+    needs: checklicense
+    if: needs.checklicense.outputs.is_unity_license_set == 'false' && github.event_name == 'workflow_dispatch'
+    name: Request Unity activation file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request manual activation file
+        id: getManualLicenseFile
+        uses: game-ci/unity-request-activation-file@v2
+      - name: Upload activation file artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.getManualLicenseFile.outputs.filePath }}
+          path: ${{ steps.getManualLicenseFile.outputs.filePath }}
+
+  # ---------------------------------------------------------------------
+  # build: cross-compiles the Unity project to StandaloneWindows64 from
+  # a Linux runner via GameCI's Docker images. Library/ is cached per
+  # platform for fast subsequent builds.
+  # ---------------------------------------------------------------------
+  build:
+    needs: checklicense
+    if: needs.checklicense.outputs.is_unity_license_set == 'true'
+    name: Package Windows Shipping Build (StandaloneWindows64)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-StandaloneWindows64-${{ hashFiles('Packages/manifest.json', 'ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: |
+            Library-StandaloneWindows64-
+            Library-
+
+      - name: Build Unity project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: StandaloneWindows64
+          buildName: ${{ env.PROJECT_NAME }}
 
       - name: List packaged output
         if: always()
-        run: find PackagedBuild -type f | head -50 || echo "PackagedBuild directory not found"
+        run: |
+          echo "Contents of build/:"
+          find build -maxdepth 4 -type f | head -100 || echo "build/ not found"
 
       - name: Create portable ZIP archive
         if: success()
         run: |
-          cd PackagedBuild
-          zip -r "../${{ env.PROJECT_NAME }}-Win64-Shipping.zip" Windows/ \
-            --exclude "*.pdb" --exclude "*.debug"
+          cd build
+          zip -r "../${{ env.PROJECT_NAME }}-Win64.zip" StandaloneWindows64/ \
+            -x "*.pdb" "*.debug"
 
       - name: Upload portable EXE artifact
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.PROJECT_NAME }}-Win64-Shipping-${{ github.run_number }}
-          path: ${{ env.PROJECT_NAME }}-Win64-Shipping.zip
+          name: ${{ env.PROJECT_NAME }}-Win64-${{ github.run_number }}
+          path: ${{ env.PROJECT_NAME }}-Win64.zip
           retention-days: 30
           if-no-files-found: error
-
-      - name: Upload UAT log on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: uat-log-${{ github.run_number }}
-          path: uat_log.txt
-          retention-days: 7

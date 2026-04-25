@@ -1,27 +1,49 @@
-# Unreal Engine generated directories
-Binaries/
-Build/
-DerivedDataCache/
-Intermediate/
-Saved/
+# Unity-generated directories
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
 
-# Visual Studio
-*.VC.db
-*.opensdf
-*.opendb
-*.sdf
+# Unity asset metadata cache
+[Aa]ssets/AssetStoreTools*
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.unityproj
 *.sln
 *.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
 
-# Xcode
-*.xcworkspace
-*.xcodeproj
+# Unity build artifacts
+*.apk
+*.aab
+*.unitypackage
+*.app
 
-# IDE
-.idea/
-.vs/
+# Crash reports
+sysinfo.txt
+crashlytics-build.properties
 
-# Unreal editor content collections
-Content/Collections/
-Content/__ExternalActors__/
-Content/__ExternalObjects__/
+# Mac
+.DS_Store
+
+# macOS Unity
+ExportedObj/
+.consulo/
