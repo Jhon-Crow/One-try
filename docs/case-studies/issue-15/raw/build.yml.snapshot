@@ -1,0 +1,120 @@
+name: Build Portable Windows EXE
+
+on:
+  push:
+    branches: [ main, "issue-*" ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  PROJECT_NAME: OneTry
+
+jobs:
+  # ---------------------------------------------------------------------
+  # checklicense: reports whether packaging can actually run. Push/PR builds
+  # stay green without Unity secrets so repository setup does not block CI;
+  # the real build job still runs only when UNITY_LICENSE is configured.
+  # ---------------------------------------------------------------------
+  checklicense:
+    name: Check for UNITY_LICENSE in GitHub Secrets
+    runs-on: ubuntu-latest
+    outputs:
+      is_unity_license_set: ${{ steps.checklicense_job.outputs.is_unity_license_set }}
+    steps:
+      - id: checklicense_job
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        run: |
+          if [ -n "$UNITY_LICENSE" ]; then
+            echo "UNITY_LICENSE is set; build will run."
+            echo "is_unity_license_set=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "UNITY_LICENSE is NOT set."
+            echo "Configure UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD secrets to enable Windows packaging."
+            echo "See README.md → 'GitHub Actions — Portable Windows EXE → Setup'."
+            echo "is_unity_license_set=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report portable EXE artifact availability
+        if: steps.checklicense_job.outputs.is_unity_license_set == 'false' && github.event_name != 'workflow_dispatch'
+        run: |
+          echo "::warning title=Portable EXE artifact is not available::UNITY_LICENSE is missing, so the Windows packaging job is skipped and no OneTry-Win64 ZIP artifact is uploaded for this run."
+          echo "Add UNITY_LICENSE, UNITY_EMAIL, and UNITY_PASSWORD repository secrets, then re-run this workflow to produce the portable EXE artifact."
+
+  # ---------------------------------------------------------------------
+  # activation: runs on demand (manual workflow_dispatch) when there is
+  # no UNITY_LICENSE yet, producing a .alf activation request file as an
+  # artifact. Upload it to https://license.unity3d.com/manual to get a
+  # .ulf license, then store its content in the UNITY_LICENSE secret.
+  # ---------------------------------------------------------------------
+  activation:
+    needs: checklicense
+    if: needs.checklicense.outputs.is_unity_license_set == 'false' && github.event_name == 'workflow_dispatch'
+    name: Request Unity activation file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request manual activation file
+        id: getManualLicenseFile
+        uses: game-ci/unity-request-activation-file@v2
+      - name: Upload activation file artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.getManualLicenseFile.outputs.filePath }}
+          path: ${{ steps.getManualLicenseFile.outputs.filePath }}
+
+  # ---------------------------------------------------------------------
+  # build: cross-compiles the Unity project to StandaloneWindows64 from
+  # a Linux runner via GameCI's Docker images. Library/ is cached per
+  # platform for fast subsequent builds.
+  # ---------------------------------------------------------------------
+  build:
+    needs: checklicense
+    if: needs.checklicense.outputs.is_unity_license_set == 'true'
+    name: Package Windows Shipping Build (StandaloneWindows64)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-StandaloneWindows64-${{ hashFiles('Packages/manifest.json', 'ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: |
+            Library-StandaloneWindows64-
+            Library-
+
+      - name: Build Unity project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: StandaloneWindows64
+          buildName: ${{ env.PROJECT_NAME }}
+
+      - name: List packaged output
+        if: always()
+        run: |
+          echo "Contents of build/:"
+          find build -maxdepth 4 -type f | head -100 || echo "build/ not found"
+
+      - name: Create portable ZIP archive
+        if: success()
+        run: |
+          cd build
+          zip -r "../${{ env.PROJECT_NAME }}-Win64.zip" StandaloneWindows64/ \
+            -x "*.pdb" "*.debug"
+
+      - name: Upload portable EXE artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}-Win64-${{ github.run_number }}
+          path: ${{ env.PROJECT_NAME }}-Win64.zip
+          retention-days: 30
+          if-no-files-found: error
