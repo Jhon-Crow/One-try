@@ -8,103 +8,64 @@ on:
   workflow_dispatch:
 
 env:
+  GODOT_VERSION: "4.3"
   PROJECT_NAME: OneTry
+  EXPORT_PRESET: "Windows Desktop"
 
 jobs:
   # ---------------------------------------------------------------------
-  # checklicense: reports whether the build can run based on available
-  # credentials. Push/PR builds stay green without Unity credentials so
-  # repository setup does not block CI; the real build job still runs
-  # only when UNITY_EMAIL and UNITY_PASSWORD are configured.
-  # ---------------------------------------------------------------------
-  checklicense:
-    name: Check for Unity credentials in GitHub Secrets
-    runs-on: ubuntu-latest
-    outputs:
-      has_credentials: ${{ steps.checklicense_job.outputs.has_credentials }}
-    steps:
-      - id: checklicense_job
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        run: |
-          if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
-            echo "Unity credentials are set; build will run."
-            echo "has_credentials=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Unity credentials (UNITY_EMAIL and/or UNITY_PASSWORD) are NOT set."
-            echo "Add UNITY_EMAIL and UNITY_PASSWORD repository secrets to enable Windows packaging."
-            echo "See README.md → 'GitHub Actions — Portable Windows EXE → Setup'."
-            echo "has_credentials=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Report portable EXE artifact availability
-        if: steps.checklicense_job.outputs.has_credentials == 'false'
-        run: |
-          echo "::warning title=Portable EXE artifact is not available::Unity credentials are missing, so the Windows packaging job is skipped and no OneTry-Win64 ZIP artifact is uploaded for this run."
-          echo "Add UNITY_EMAIL and UNITY_PASSWORD repository secrets, then re-run this workflow to produce the portable EXE artifact."
-
-  # ---------------------------------------------------------------------
-  # build: cross-compiles the Unity project to StandaloneWindows64 from
-  # a Linux runner via GameCI's Docker images. Activates a Personal Unity
-  # license via buildalon/activate-unity-license (credential-based,
-  # no .alf/.ulf exchange needed). Library/ is cached per platform for
-  # fast subsequent builds.
+  # build: exports the Godot 4 project to StandaloneWindows64 from a
+  # Linux runner. No license or credentials required — Godot is free and
+  # open-source. Export templates are downloaded automatically.
   # ---------------------------------------------------------------------
   build:
-    needs: checklicense
-    if: needs.checklicense.outputs.has_credentials == 'true'
-    name: Package Windows Shipping Build (StandaloneWindows64)
+    name: Package Windows Portable EXE (Godot ${{ env.GODOT_VERSION }})
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           lfs: true
 
-      - name: Cache Library
-        uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-StandaloneWindows64-${{ hashFiles('Packages/manifest.json', 'ProjectSettings/ProjectVersion.txt') }}
-          restore-keys: |
-            Library-StandaloneWindows64-
-            Library-
+      - name: Install Godot ${{ env.GODOT_VERSION }} headless
+        run: |
+          GODOT_FILENAME="Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/${GODOT_FILENAME}.zip"
+          wget -q "$GODOT_URL" -O godot.zip
+          unzip -q godot.zip
+          mkdir -p ~/.local/share/godot
+          mv "$GODOT_FILENAME" ~/.local/share/godot/godot
+          chmod +x ~/.local/share/godot/godot
+          echo "PATH=$HOME/.local/share/godot:$PATH" >> "$GITHUB_ENV"
 
-      - name: Activate Unity license
-        uses: buildalon/activate-unity-license@v1
-        with:
-          license: 'Personal'
-          username: ${{ secrets.UNITY_EMAIL }}
-          password: ${{ secrets.UNITY_PASSWORD }}
+      - name: Install Godot Windows export templates
+        run: |
+          TEMPLATES_FILENAME="Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          TEMPLATES_URL="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/${TEMPLATES_FILENAME}"
+          wget -q "$TEMPLATES_URL" -O templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          unzip -q templates.tpz -d /tmp/godot_templates
+          mv /tmp/godot_templates/templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
 
-      - name: Build Unity project
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          targetPlatform: StandaloneWindows64
-          buildName: ${{ env.PROJECT_NAME }}
+      - name: Import project (generate .godot cache)
+        run: |
+          godot --headless --import --quit 2>&1 || true
 
-      - name: Return Unity license
-        if: always()
-        uses: buildalon/activate-unity-license@v1
-        with:
-          return-license: true
+      - name: Export Windows EXE
+        run: |
+          mkdir -p builds
+          godot --headless --export-release "${{ env.EXPORT_PRESET }}" builds/${{ env.PROJECT_NAME }}.exe 2>&1
 
-      - name: List packaged output
+      - name: List exported output
         if: always()
         run: |
-          echo "Contents of build/:"
-          find build -maxdepth 4 -type f | head -100 || echo "build/ not found"
+          echo "Contents of builds/:"
+          find builds -maxdepth 2 -type f | head -50 || echo "builds/ not found or empty"
 
       - name: Create portable ZIP archive
         if: success()
         run: |
-          cd build
-          zip -r "../${{ env.PROJECT_NAME }}-Win64.zip" StandaloneWindows64/ \
-            -x "*.pdb" "*.debug"
+          cd builds
+          zip -r "../${{ env.PROJECT_NAME }}-Win64.zip" . -x "*.pdb" "*.debug"
 
       - name: Upload portable EXE artifact
         if: success()

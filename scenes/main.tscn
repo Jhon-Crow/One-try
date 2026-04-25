@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=3 uid="uid://main"]
+
+[ext_resource type="Script" path="res://scripts/game_controller.gd" id="1_gamecontroller"]
+[ext_resource type="Script" path="res://scripts/win_trigger.gd" id="2_wintrigger"]
+
+[sub_resource type="StandardMaterial3D" id="1_mat_default"]
+albedo_color = Color(0.8, 0.8, 0.8, 1)
+
+[sub_resource type="StandardMaterial3D" id="2_mat_sphere"]
+albedo_color = Color(0.9, 0.5, 0.2, 1)
+
+[node name="Main" type="Node"]
+script = ExtResource("1_gamecontroller")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -10)
+fov = 60.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.906308, -0.275639, 0.321394, 0, 0.759434, 0.650628, -0.422618, -0.591506, 0.688354, 0, 3, 0)
+light_color = Color(1, 0.956863, 0.839216, 1)
+shadow_enabled = true
+
+[node name="Level" type="Node3D" parent="."]
+
+[node name="Plane" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Plane"]
+mesh = PlaneMesh.new()
+surface_material_override/0 = SubResource("1_mat_default")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Plane"]
+shape = BoxShape3D.new()
+
+[node name="WinTrigger" type="Area3D" parent="Level/Plane"]
+script = ExtResource("2_wintrigger")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Plane/WinTrigger"]
+shape = BoxShape3D.new()
+
+[node name="Sphere" type="RigidBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Sphere"]
+mesh = SphereMesh.new()
+surface_material_override/0 = SubResource("2_mat_sphere")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Sphere"]
+shape = SphereShape3D.new()
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="WinScreen" type="Label" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -100.0
+offset_right = 400.0
+offset_bottom = 100.0
+text = "A WINNER IS YOU"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 80
+
+[connection signal="object_entered" from="Level/Plane/WinTrigger" to="." method="show_win_screen"]
+[connection signal="body_entered" from="Level/Plane/WinTrigger" to="Level/Plane/WinTrigger" method="_on_body_entered"]

@@ -1,78 +1,45 @@
 # One-try
 
-3D action / roguelite game project built with **Unity 6.3 LTS** (`6000.3.x`).
+3D action / roguelite game project built with **Godot 4.3** (free and open-source).
 
-See [`GAME_DESIGN.md`](./GAME_DESIGN.md) for the design document and
-[`docs/case-studies/issue-8/`](./docs/case-studies/issue-8/) for the
-case study explaining the engine choice and migration from the initial
-Unreal Engine prototype.
+See [`GAME_DESIGN.md`](./GAME_DESIGN.md) for the design document.
 
 ## Requirements
 
-- [Unity Hub](https://unity.com/download)
-- Unity Editor **6.3 LTS** (any 6000.3.x revision). The pinned revision
-  is in `ProjectSettings/ProjectVersion.txt`; Unity Hub will offer to
-  install the matching version when you first open the project.
+- [Godot Engine 4.3](https://godotengine.org/download) — free, no account required
 
 ## Opening the project
 
-1. Install Unity Hub.
-2. Install Unity Editor 6.3 LTS via Unity Hub.
-3. In Unity Hub, click **Add → Add project from disk** and select this
-   folder.
-4. Open the project. The first open takes a few minutes while Unity
-   imports packages and generates the local `Library/` cache.
-5. Open `Assets/Scenes/SampleScene.unity`.
+1. Download and install Godot 4.3 from <https://godotengine.org/download>.
+2. Launch Godot, click **Import**, and select this folder (`project.godot`).
+3. Press **F5** (or the Play button) to run the main scene (`scenes/main.tscn`).
 
 ## Player Mannequin
 
-A multi-part humanoid mannequin prefab lives at
-`Assets/Characters/Player/PlayerMannequin.prefab`. To test it:
-
-1. In an open scene, use the menu **GameObject → One-try → Add Player Mannequin**,
-   or drag the prefab from the Project window.
-2. Press **Play**. The mannequin plays a looping idle animation (gentle chest
-   breathing).
-
-The mannequin is built from Unity primitive Capsules arranged in a humanoid
-hierarchy (clavicles, upper arms, forearms, hands; thighs, calves, feet).
-No external assets required — everything is in the repo as readable YAML.
+A multi-part humanoid mannequin scene lives at `scenes/player_mannequin.tscn`.
+To add it to a scene, drag it from the FileSystem dock into the viewport, then
+press **F5** — the mannequin plays a looping idle animation (gentle chest
+breathing). The mannequin is built from Godot `BoxMesh` primitives arranged in
+a humanoid hierarchy (clavicles, upper arms, forearms, hands; thighs, calves,
+feet). No external assets required — everything is in the repo as readable text.
 Segment meshes and materials can be swapped independently for future
 SIGNALIS-style visuals.
 
 ## GitHub Actions — Portable Windows EXE
 
 The workflow [`.github/workflows/build.yml`](./.github/workflows/build.yml)
-packages a portable Windows EXE on every push. It uses the
-[GameCI](https://game.ci) `unity-builder` action, runs on a free
-GitHub-hosted Linux runner, cross-compiles to `StandaloneWindows64`, and
-uploads the result as a workflow artifact.
+packages a portable Windows EXE on every push. It uses the official Godot
+headless binary, runs on a free GitHub-hosted Linux runner, and uploads the
+result as a workflow artifact.
 
-### Setup (required once)
-
-The build needs a Unity account. Personal licenses are free.
-
-1. Create a free Unity account at <https://id.unity.com> if you don't
-   have one.
-2. Add the following secrets in **Settings → Secrets and variables →
-   Actions**:
-   - `UNITY_EMAIL` — your Unity account email address.
-   - `UNITY_PASSWORD` — your Unity account password.
-
-That is all. The workflow activates a Personal license automatically
-using [`buildalon/activate-unity-license`](https://github.com/buildalon/activate-unity-license)
-at build time — no `.alf` or `.ulf` file generation or upload is needed.
-
-Until those two secrets are set, push and pull-request runs pass the
-`Check for Unity credentials in GitHub Secrets` preflight but skip the
-Unity packaging job, so no portable EXE artifact is uploaded.
+**No credentials or secrets are required.** Godot is free and open-source —
+the workflow downloads Godot and export templates automatically.
 
 ### Running the build
 
 - Triggers automatically on push to `main` / `issue-*` branches and on
-  PRs targeting `main`. Can also be run manually via **Actions → Build
-  Portable Windows EXE → Run workflow**.
-- After a successful run with Unity secrets configured, open the run
-  summary and download the artifact named `OneTry-Win64-<run-number>`.
-  The artifact contains `OneTry-Win64.zip`; extract it and run
-  `StandaloneWindows64/OneTry.exe` — no installation required.
+  PRs targeting `main`. Can also be run manually via
+  **Actions → Build Portable Windows EXE → Run workflow**.
+- After a successful run, open the run summary and download the artifact
+  named `OneTry-Win64-<run-number>`. Extract the ZIP and run `OneTry.exe` —
+  no installation required.
