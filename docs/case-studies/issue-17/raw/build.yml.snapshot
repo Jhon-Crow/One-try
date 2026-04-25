@@ -27,7 +27,6 @@ jobs:
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          SHOULD_FAIL_WITHOUT_CREDENTIALS: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
         run: |
           if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
             echo "Unity credentials are set; build will run."
@@ -37,10 +36,6 @@ jobs:
             echo "Add UNITY_EMAIL and UNITY_PASSWORD repository secrets to enable Windows packaging."
             echo "See README.md → 'GitHub Actions — Portable Windows EXE → Setup'."
             echo "has_credentials=false" >> "$GITHUB_OUTPUT"
-            if [ "$SHOULD_FAIL_WITHOUT_CREDENTIALS" = "true" ]; then
-              echo "::error title=Portable EXE artifact cannot be built::UNITY_EMAIL and UNITY_PASSWORD repository secrets are required for main/manual release builds."
-              exit 1
-            fi
           fi
 
       - name: Report portable EXE artifact availability
@@ -76,7 +71,7 @@ jobs:
             Library-
 
       - name: Activate Unity license
-        uses: buildalon/activate-unity-license@v2
+        uses: buildalon/activate-unity-license@v1
         with:
           license: 'Personal'
           username: ${{ secrets.UNITY_EMAIL }}
@@ -94,7 +89,7 @@ jobs:
 
       - name: Return Unity license
         if: always()
-        uses: buildalon/activate-unity-license@v2
+        uses: buildalon/activate-unity-license@v1
         with:
           return-license: true
 

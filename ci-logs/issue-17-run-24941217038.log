@@ -1,0 +1,60 @@
+Check for Unity credentials in GitHub Secrets	Set up job	﻿2026-04-25T21:35:18.8196250Z Current runner version: '2.333.1'
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8231775Z ##[group]Runner Image Provisioner
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8233039Z Hosted Compute Agent
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8233786Z Version: 20260213.493
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8234660Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8235675Z Build Date: 2026-02-13T00:28:41Z
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8236339Z Worker ID: {0957e930-c644-4581-8fb4-301be0d583fc}
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8236990Z Azure Region: northcentralus
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8237623Z ##[endgroup]
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8239546Z ##[group]Operating System
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8240130Z Ubuntu
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8240711Z 24.04.4
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8241129Z LTS
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8241579Z ##[endgroup]
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8242060Z ##[group]Runner Image
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8242619Z Image: ubuntu-24.04
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8243087Z Version: 20260413.86.1
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8244144Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8245762Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8246771Z ##[endgroup]
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8247827Z ##[group]GITHUB_TOKEN Permissions
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8250183Z Contents: read
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8250887Z Metadata: read
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8251397Z Packages: read
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8251838Z ##[endgroup]
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8253923Z Secret source: None
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.8254630Z Prepare workflow directory
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.9543352Z Prepare all required actions
+Check for Unity credentials in GitHub Secrets	Set up job	2026-04-25T21:35:18.9625053Z Complete job name: Check for Unity credentials in GitHub Secrets
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	﻿2026-04-25T21:35:19.0687079Z ##[group]Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.0688205Z [36;1mif [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then[0m
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.0689269Z [36;1m  echo "Unity credentials are set; build will run."[0m
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.0690092Z [36;1m  echo "has_credentials=true" >> "$GITHUB_OUTPUT"[0m
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.0690841Z [36;1melse[0m
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.0691503Z [36;1m  echo "Unity credentials (UNITY_EMAIL and/or UNITY_PASSWORD) are NOT set."[0m
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.0692630Z [36;1m  echo "Add UNITY_EMAIL and UNITY_PASSWORD repository secrets to enable Windows packaging."[0m
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.0693736Z [36;1m  echo "See README.md → 'GitHub Actions — Portable Windows EXE → Setup'."[0m
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.0694663Z [36;1m  echo "has_credentials=false" >> "$GITHUB_OUTPUT"[0m
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.0695365Z [36;1mfi[0m
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.5593509Z shell: /usr/bin/bash -e {0}
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.5594431Z env:
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.5594885Z   PROJECT_NAME: OneTry
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.5595703Z   UNITY_EMAIL: 
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.5596342Z   UNITY_PASSWORD: 
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.5596860Z ##[endgroup]
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.5816584Z Unity credentials (UNITY_EMAIL and/or UNITY_PASSWORD) are NOT set.
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.5818378Z Add UNITY_EMAIL and UNITY_PASSWORD repository secrets to enable Windows packaging.
+Check for Unity credentials in GitHub Secrets	Run if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then	2026-04-25T21:35:19.5906157Z See README.md → 'GitHub Actions — Portable Windows EXE → Setup'.
+Check for Unity credentials in GitHub Secrets	Report portable EXE artifact availability	﻿2026-04-25T21:35:19.6041737Z ##[group]Run echo "::warning title=Portable EXE artifact is not available::Unity credentials are missing, so the Windows packaging job is skipped and no OneTry-Win64 ZIP artifact is uploaded for this run."
+Check for Unity credentials in GitHub Secrets	Report portable EXE artifact availability	2026-04-25T21:35:19.6044369Z [36;1mecho "::warning title=Portable EXE artifact is not available::Unity credentials are missing, so the Windows packaging job is skipped and no OneTry-Win64 ZIP artifact is uploaded for this run."[0m
+Check for Unity credentials in GitHub Secrets	Report portable EXE artifact availability	2026-04-25T21:35:19.6046458Z [36;1mecho "Add UNITY_EMAIL and UNITY_PASSWORD repository secrets, then re-run this workflow to produce the portable EXE artifact."[0m
+Check for Unity credentials in GitHub Secrets	Report portable EXE artifact availability	2026-04-25T21:35:19.6067522Z shell: /usr/bin/bash -e {0}
+Check for Unity credentials in GitHub Secrets	Report portable EXE artifact availability	2026-04-25T21:35:19.6068034Z env:
+Check for Unity credentials in GitHub Secrets	Report portable EXE artifact availability	2026-04-25T21:35:19.6068613Z   PROJECT_NAME: OneTry
+Check for Unity credentials in GitHub Secrets	Report portable EXE artifact availability	2026-04-25T21:35:19.6069095Z ##[endgroup]
+Check for Unity credentials in GitHub Secrets	Report portable EXE artifact availability	2026-04-25T21:35:19.6222101Z ##[warning]Unity credentials are missing, so the Windows packaging job is skipped and no OneTry-Win64 ZIP artifact is uploaded for this run.
+Check for Unity credentials in GitHub Secrets	Report portable EXE artifact availability	2026-04-25T21:35:19.6230704Z Add UNITY_EMAIL and UNITY_PASSWORD repository secrets, then re-run this workflow to produce the portable EXE artifact.
+Check for Unity credentials in GitHub Secrets	Complete job	﻿2026-04-25T21:35:19.6294431Z Evaluate and set job outputs
+Check for Unity credentials in GitHub Secrets	Complete job	2026-04-25T21:35:19.6301546Z Set output 'has_credentials'
+Check for Unity credentials in GitHub Secrets	Complete job	2026-04-25T21:35:19.6304002Z Cleaning up orphan processes
