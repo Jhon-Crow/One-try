@@ -24,6 +24,22 @@ Unreal Engine prototype.
    imports packages and generates the local `Library/` cache.
 5. Open `Assets/Scenes/SampleScene.unity`.
 
+## Player Mannequin
+
+A multi-part humanoid mannequin prefab lives at
+`Assets/Characters/Player/PlayerMannequin.prefab`. To test it:
+
+1. In an open scene, use the menu **GameObject → One-try → Add Player Mannequin**,
+   or drag the prefab from the Project window.
+2. Press **Play**. The mannequin plays a looping idle animation (gentle chest
+   breathing).
+
+The mannequin is built from Unity primitive Capsules arranged in a humanoid
+hierarchy (clavicles, upper arms, forearms, hands; thighs, calves, feet).
+No external assets required — everything is in the repo as readable YAML.
+Segment meshes and materials can be swapped independently for future
+SIGNALIS-style visuals.
+
 ## GitHub Actions — Portable Windows EXE
 
 The workflow [`.github/workflows/build.yml`](./.github/workflows/build.yml)
@@ -49,13 +65,18 @@ The build needs a Unity license. Personal licenses are free.
    - `UNITY_EMAIL` — your Unity account email.
    - `UNITY_PASSWORD` — your Unity account password.
 
-Until those secrets are set, the build job is skipped with a clear
-message instead of failing red.
+Until those secrets are set, push and pull-request runs pass the
+`Check for UNITY_LICENSE in GitHub Secrets` preflight but skip the Unity
+packaging job, so no portable EXE artifact is uploaded. Manual
+`workflow_dispatch` runs are allowed to continue to the activation job
+so the owner can download the `.alf` activation-request artifact.
 
 ### Running the build
 
 - Triggers automatically on push to `main` / `issue-*` branches and on
   PRs targeting `main`. Can also be run manually via **Actions → Build
   Portable Windows EXE → Run workflow**.
-- Download the ZIP artifact from the workflow run summary. Extract and
-  run `OneTry.exe` — no installation required.
+- After a successful run with Unity secrets configured, open the run
+  summary and download the artifact named `OneTry-Win64-<run-number>`.
+  The artifact contains `OneTry-Win64.zip`; extract it and run
+  `StandaloneWindows64/OneTry.exe` — no installation required.

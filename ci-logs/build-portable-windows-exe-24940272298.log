@@ -1,0 +1,61 @@
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	﻿2026-04-25T20:44:57.3859156Z Current runner version: '2.333.1'
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3916258Z ##[group]Runner Image Provisioner
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3917327Z Hosted Compute Agent
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3917837Z Version: 20260213.493
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3918448Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3919185Z Build Date: 2026-02-13T00:28:41Z
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3919847Z Worker ID: {115523fd-dfa0-41bb-8230-f7b892d143b1}
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3920493Z Azure Region: westcentralus
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3921470Z ##[endgroup]
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3923330Z ##[group]Operating System
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3924005Z Ubuntu
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3924588Z 24.04.4
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3925033Z LTS
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3925512Z ##[endgroup]
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3926054Z ##[group]Runner Image
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3926727Z Image: ubuntu-24.04
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3927203Z Version: 20260413.86.1
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3928248Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3929929Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3930917Z ##[endgroup]
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3932298Z ##[group]GITHUB_TOKEN Permissions
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3934676Z Contents: read
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3935380Z Metadata: read
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3935903Z Packages: read
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3936388Z ##[endgroup]
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3938679Z Secret source: None
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.3939341Z Prepare workflow directory
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.4372611Z Prepare all required actions
+Check for UNITY_LICENSE in GitHub Secrets	Set up job	2026-04-25T20:44:57.4434310Z Complete job name: Check for UNITY_LICENSE in GitHub Secrets
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	﻿2026-04-25T20:44:57.5242060Z ##[group]Run if [ -n "$UNITY_LICENSE" ]; then
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5242946Z [36;1mif [ -n "$UNITY_LICENSE" ]; then[0m
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5243698Z [36;1m  echo "UNITY_LICENSE is set; build will run."[0m
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5244611Z [36;1m  echo "is_unity_license_set=true" >> "$GITHUB_OUTPUT"[0m
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5245425Z [36;1melse[0m
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5245991Z [36;1m  echo "UNITY_LICENSE is NOT set."[0m
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5247059Z [36;1m  echo "Configure UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD secrets to enable Windows packaging."[0m
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5248216Z [36;1m  echo "See README.md → 'GitHub Actions — Portable Windows EXE → Setup'."[0m
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5249152Z [36;1m  echo "is_unity_license_set=false" >> "$GITHUB_OUTPUT"[0m
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5249897Z [36;1mfi[0m
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5677390Z shell: /usr/bin/bash -e {0}
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5679083Z env:
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5679797Z   PROJECT_NAME: OneTry
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5680636Z   UNITY_LICENSE: 
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5681943Z ##[endgroup]
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5952694Z UNITY_LICENSE is NOT set.
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.5955006Z Configure UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD secrets to enable Windows packaging.
+Check for UNITY_LICENSE in GitHub Secrets	Run if [ -n "$UNITY_LICENSE" ]; then	2026-04-25T20:44:57.6099496Z See README.md → 'GitHub Actions — Portable Windows EXE → Setup'.
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	﻿2026-04-25T20:44:57.6417642Z ##[group]Run echo "::error title=Portable EXE artifact is not available::UNITY_LICENSE is missing, so the Windows packaging job cannot run and no OneTry-Win64 ZIP artifact can be uploaded."
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6421676Z [36;1mecho "::error title=Portable EXE artifact is not available::UNITY_LICENSE is missing, so the Windows packaging job cannot run and no OneTry-Win64 ZIP artifact can be uploaded."[0m
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6424444Z [36;1mecho "Add UNITY_LICENSE, UNITY_EMAIL, and UNITY_PASSWORD repository secrets, then re-run this workflow."[0m
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6425883Z [36;1mexit 1[0m
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6458417Z shell: /usr/bin/bash -e {0}
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6459172Z env:
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6459739Z   PROJECT_NAME: OneTry
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6460389Z ##[endgroup]
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6574646Z ##[error]UNITY_LICENSE is missing, so the Windows packaging job cannot run and no OneTry-Win64 ZIP artifact can be uploaded.
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6586333Z Add UNITY_LICENSE, UNITY_EMAIL, and UNITY_PASSWORD repository secrets, then re-run this workflow.
+Check for UNITY_LICENSE in GitHub Secrets	Fail when push/PR cannot produce portable EXE	2026-04-25T20:44:57.6590836Z ##[error]Process completed with exit code 1.
+Check for UNITY_LICENSE in GitHub Secrets	Complete job	﻿2026-04-25T20:44:57.6694012Z Evaluate and set job outputs
+Check for UNITY_LICENSE in GitHub Secrets	Complete job	2026-04-25T20:44:57.6704592Z Set output 'is_unity_license_set'
+Check for UNITY_LICENSE in GitHub Secrets	Complete job	2026-04-25T20:44:57.6707920Z Cleaning up orphan processes
