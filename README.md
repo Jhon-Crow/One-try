@@ -65,11 +65,11 @@ The build needs a Unity license. Personal licenses are free.
    - `UNITY_EMAIL` — your Unity account email.
    - `UNITY_PASSWORD` — your Unity account password.
 
-Until those secrets are set, push and pull-request runs fail at
-`Check for UNITY_LICENSE in GitHub Secrets` because they cannot produce
-the required portable EXE artifact. Manual `workflow_dispatch` runs are
-allowed to continue to the activation job so the owner can download the
-`.alf` activation-request artifact.
+Until those secrets are set, push and pull-request runs pass the
+`Check for UNITY_LICENSE in GitHub Secrets` preflight but skip the Unity
+packaging job, so no portable EXE artifact is uploaded. Manual
+`workflow_dispatch` runs are allowed to continue to the activation job
+so the owner can download the `.alf` activation-request artifact.
 
 ### Running the build
 
