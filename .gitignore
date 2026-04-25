@@ -1,49 +1,14 @@
-# Unity-generated directories
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Ll]ogs/
-[Uu]ser[Ss]ettings/
-[Mm]emoryCaptures/
-[Rr]ecordings/
-
-# Unity asset metadata cache
-[Aa]ssets/AssetStoreTools*
+# Godot 4 generated files
+.godot/
+builds/
 
 # Visual Studio / Rider / VS Code
 .vs/
 .vscode/
 .idea/
-*.csproj
-*.unityproj
-*.sln
-*.suo
+
+# Build artifacts
 *.tmp
-*.user
-*.userprefs
-*.pidb
-*.booproj
-*.svd
-*.pdb
-*.mdb
-*.opendb
-*.VC.db
-
-# Unity build artifacts
-*.apk
-*.aab
-*.unitypackage
-*.app
-
-# Crash reports
-sysinfo.txt
-crashlytics-build.properties
 
 # Mac
 .DS_Store
-
-# macOS Unity
-ExportedObj/
-.consulo/

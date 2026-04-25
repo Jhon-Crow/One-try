@@ -1,0 +1,150 @@
+[gd_scene load_steps=4 format=3 uid="uid://player_mannequin"]
+
+[ext_resource type="Script" path="res://scripts/player_character.gd" id="1_playerscript"]
+
+[sub_resource type="BoxMesh" id="1_boxmesh"]
+
+[sub_resource type="Animation" id="1_idle_anim"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body/Chest:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.0, 0.5, 1.0, 1.5, 2.0),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 1.2, 0), Vector3(0, 1.22, 0), Vector3(0, 1.2, 0), Vector3(0, 1.18, 0), Vector3(0, 1.2, 0)]
+}
+
+[node name="PlayerMannequin" type="Node3D"]
+script = ExtResource("1_playerscript")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="Body" type="Node3D" parent="."]
+
+[node name="Hips" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.38, 0, 0, 0, 0.18, 0, 0, 0, 0.22, 0, 0.95, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Chest" type="Node3D" parent="Body"]
+position = Vector3(0, 1.2, 0)
+
+[node name="ChestMesh" type="MeshInstance3D" parent="Body/Chest"]
+transform = Transform3D(0.42, 0, 0, 0, 0.25, 0, 0, 0, 0.22, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Head" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.22, 0, 0, 0, 0.24, 0, 0, 0, 0.22, 0, 1.65, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Neck" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.1, 0, 0, 0, 0.09, 0, 0, 0, 0.1, 0, 1.47, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Spine" type="MeshInstance3D" parent="Body/Chest"]
+transform = Transform3D(0.85, 0, 0, 0, 0.12, 0, 0, 0, 0.85, 0, -0.15, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Thigh_L" type="Node3D" parent="Body/Hips"]
+position = Vector3(-0.1, -0.15, 0)
+
+[node name="ThighMesh_L" type="MeshInstance3D" parent="Body/Hips/Thigh_L"]
+transform = Transform3D(0.18, 0, 0, 0, 0.25, 0, 0, 0, 0.18, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Calf_L" type="Node3D" parent="Body/Hips/Thigh_L"]
+position = Vector3(0, -0.52, 0)
+
+[node name="CalfMesh_L" type="MeshInstance3D" parent="Body/Hips/Thigh_L/Calf_L"]
+transform = Transform3D(0.15, 0, 0, 0, 0.25, 0, 0, 0, 0.15, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Foot_L" type="Node3D" parent="Body/Hips/Thigh_L/Calf_L"]
+transform = Transform3D(1, 0, 0, 0, 0.99144, 0.1305, 0, -0.1305, 0.99144, 0, -0.56, 0)
+
+[node name="FootMesh_L" type="MeshInstance3D" parent="Body/Hips/Thigh_L/Calf_L/Foot_L"]
+transform = Transform3D(0.9, 0, 0, 0, 0.4, 0, 0, 0, 1.5, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Thigh_R" type="Node3D" parent="Body/Hips"]
+position = Vector3(0.1, -0.15, 0)
+
+[node name="ThighMesh_R" type="MeshInstance3D" parent="Body/Hips/Thigh_R"]
+transform = Transform3D(0.18, 0, 0, 0, 0.25, 0, 0, 0, 0.18, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Calf_R" type="Node3D" parent="Body/Hips/Thigh_R"]
+position = Vector3(0, -0.52, 0)
+
+[node name="CalfMesh_R" type="MeshInstance3D" parent="Body/Hips/Thigh_R/Calf_R"]
+transform = Transform3D(0.15, 0, 0, 0, 0.25, 0, 0, 0, 0.15, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Foot_R" type="Node3D" parent="Body/Hips/Thigh_R/Calf_R"]
+transform = Transform3D(1, 0, 0, 0, 0.99144, 0.1305, 0, -0.1305, 0.99144, 0, -0.56, 0)
+
+[node name="FootMesh_R" type="MeshInstance3D" parent="Body/Hips/Thigh_R/Calf_R/Foot_R"]
+transform = Transform3D(0.9, 0, 0, 0, 0.4, 0, 0, 0, 1.5, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Clavicle_L" type="Node3D" parent="Body/Chest"]
+transform = Transform3D(0.99144, 0.1305, 0, -0.1305, 0.99144, 0, 0, 0, 1, -0.16, 0.1, 0)
+
+[node name="ClavicleMesh_L" type="MeshInstance3D" parent="Body/Chest/Clavicle_L"]
+transform = Transform3D(0.09, 0, 0, 0, 0.12, 0, 0, 0, 0.09, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="UpperArm_L" type="Node3D" parent="Body/Chest/Clavicle_L"]
+transform = Transform3D(0, 0.7071, 0, -0.7071, 0, 0, 0, 0, 1, 0, -0.25, 0)
+
+[node name="UpperArmMesh_L" type="MeshInstance3D" parent="Body/Chest/Clavicle_L/UpperArm_L"]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 0.8, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Forearm_L" type="Node3D" parent="Body/Chest/Clavicle_L/UpperArm_L"]
+position = Vector3(0, -0.52, 0)
+
+[node name="ForearmMesh_L" type="MeshInstance3D" parent="Body/Chest/Clavicle_L/UpperArm_L/Forearm_L"]
+transform = Transform3D(0.85, 0, 0, 0, 0.88, 0, 0, 0, 0.85, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Hand_L" type="Node3D" parent="Body/Chest/Clavicle_L/UpperArm_L/Forearm_L"]
+position = Vector3(0, -0.56, 0)
+
+[node name="HandMesh_L" type="MeshInstance3D" parent="Body/Chest/Clavicle_L/UpperArm_L/Forearm_L/Hand_L"]
+transform = Transform3D(1.3, 0, 0, 0, 0.55, 0, 0, 0, 0.9, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Clavicle_R" type="Node3D" parent="Body/Chest"]
+transform = Transform3D(0.99144, -0.1305, 0, 0.1305, 0.99144, 0, 0, 0, 1, 0.16, 0.1, 0)
+
+[node name="ClavicleMesh_R" type="MeshInstance3D" parent="Body/Chest/Clavicle_R"]
+transform = Transform3D(0.09, 0, 0, 0, 0.12, 0, 0, 0, 0.09, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="UpperArm_R" type="Node3D" parent="Body/Chest/Clavicle_R"]
+transform = Transform3D(0, -0.7071, 0, 0.7071, 0, 0, 0, 0, 1, 0, -0.25, 0)
+
+[node name="UpperArmMesh_R" type="MeshInstance3D" parent="Body/Chest/Clavicle_R/UpperArm_R"]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 0.8, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Forearm_R" type="Node3D" parent="Body/Chest/Clavicle_R/UpperArm_R"]
+position = Vector3(0, -0.52, 0)
+
+[node name="ForearmMesh_R" type="MeshInstance3D" parent="Body/Chest/Clavicle_R/UpperArm_R/Forearm_R"]
+transform = Transform3D(0.85, 0, 0, 0, 0.88, 0, 0, 0, 0.85, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
+
+[node name="Hand_R" type="Node3D" parent="Body/Chest/Clavicle_R/UpperArm_R/Forearm_R"]
+position = Vector3(0, -0.56, 0)
+
+[node name="HandMesh_R" type="MeshInstance3D" parent="Body/Chest/Clavicle_R/UpperArm_R/Forearm_R/Hand_R"]
+transform = Transform3D(1.3, 0, 0, 0, 0.55, 0, 0, 0, 0.9, 0, 0, 0)
+mesh = SubResource("1_boxmesh")
