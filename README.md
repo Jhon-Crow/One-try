@@ -7,6 +7,11 @@ See [`GAME_DESIGN.md`](./GAME_DESIGN.md) for the design document and
 case study explaining the engine choice and migration from the initial
 Unreal Engine prototype.
 
+The core gameplay abstractions (creatures, status effects, weapons,
+projectiles, GOAP AI) live under `Assets/Scripts/Core/` — see
+[`docs/case-studies/issue-7/`](./docs/case-studies/issue-7/) for the
+design rationale and library survey.
+
 ## Requirements
 
 - [Unity Hub](https://unity.com/download)
